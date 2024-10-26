@@ -1,9 +1,11 @@
 import * as THREE from "three";
+import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
 
 import vertexShader from "./shaders/plot.vert";
 import fragmentShader from "./shaders/plot.frag";
+import { clamp } from "three/src/math/MathUtils.js";
 
 /**
  * Base
@@ -26,65 +28,51 @@ const textureLoader = new THREE.TextureLoader();
  * Test mesh
  */
 // Geometry
-const geometry = new THREE.PlaneGeometry();
+const geometry = new THREE.RingGeometry(0, 10, 50, 50);
 
 // Material
-const material = new THREE.ShaderMaterial({
+const material = new CustomShaderMaterial({
+  baseMaterial: THREE.MeshBasicMaterial,
   vertexShader,
   fragmentShader,
   transparent: true,
-  glslVersion: THREE.GLSL3,
+  side: THREE.DoubleSide,
+  wireframe: true,
   uniforms: {
     u_time: { value: 0 },
-    u_delay: { value: 1000},
-    u_scale: { value: 4 },
-    u_thickness: { value: 0.04},
-    u_color: { value: new THREE.Color("#26c955") },
-    u_transform: { value: new THREE.Vector2(0, 0) },
+    u_amplitude: { value: 7 },
+    u_inner_radius: { value: 4 },
+    u_color: { value: new THREE.Color("#8bcaef") },
   },
 });
 
-gui
-  .add(material.uniforms.u_delay, "value")
-  .min(0.1)
-  .max(1000)
-  .step(0.1)
-  .name("delay");
-  
-gui
-.add(material.uniforms.u_thickness, "value")
-.min(0.02)
-.max(1)
-.step(0.01)
-.name("thickness");
-
-gui
-  .add(material.uniforms.u_scale, "value")
-  .min(1)
-  .max(100)
-  .step(1)
-  .name("scale");
-
-// Add controls for the x and y properties of the Vector2
-const transformFolder = gui.addFolder("Transform");
-transformFolder
-  .add(material.uniforms.u_transform.value, "x")
-  .min(-10)
-  .max(10)
-  .step(0.01)
-  .name("X Axis");
-transformFolder
-  .add(material.uniforms.u_transform.value, "y")
-  .min(-10)
-  .max(10)
-  .step(0.01)
-  .name("Y Axis");
-
-gui.addColor(material.uniforms.u_color, "value").name("color");
-
 // Mesh
 const mesh = new THREE.Mesh(geometry, material);
+
+mesh.rotateX(-Math.PI / 2);
 scene.add(mesh);
+
+const config = {
+  play: true,
+};
+
+gui
+  .add(material.uniforms.u_amplitude, "value")
+  .min(0)
+  .max(10)
+  .step(0.01)
+  .name("Amplitude");
+
+gui
+  .add(material.uniforms.u_inner_radius, "value")
+  .min(0)
+  .max(10)
+  .step(0.01)
+  .name("Inner Radius");
+
+gui.add(config, "play").name("Play");
+
+gui.addColor(material.uniforms.u_color, "value").name("color");
 
 /**
  * Sizes
@@ -118,7 +106,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(0.25, -0.25, 1);
+camera.position.set(0, 10, 30);
 scene.add(camera);
 
 // Controls
@@ -139,10 +127,19 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  */
 const clock = new THREE.Clock();
 
-const tick = () => {
-  const elapsedTime = clock.getElapsedTime();
+const snap = (value, precision = 3) => {
+  return Number(value.toPrecision(precision));
+};
 
-  material.uniforms.u_time.value = elapsedTime;
+const tick = () => {
+  const elapsedTime = clock.getElapsedTime() / 5;
+
+  if (config.play) {
+    gui.controllers[0].setValue(snap(Math.abs(Math.sin(elapsedTime) * 10)));
+    gui.controllers[1].setValue(
+      snap(Math.abs(Math.sin(elapsedTime + 2) * 9) + 1)
+    );
+  }
 
   // Update controls
   controls.update();

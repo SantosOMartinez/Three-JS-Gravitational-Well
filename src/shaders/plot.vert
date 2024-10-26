@@ -1,9 +1,20 @@
+uniform float u_amplitude;
+uniform float u_inner_radius;
 
-precision highp float;
+float in_boundary(float x) {
+    return -u_inner_radius <= x && x <= u_inner_radius ? 1.0 : 0.0;
+}
 
-out vec2 vUv; 
+float gravitational_well(float x) {
+    float f = -cos((x * PI) / u_inner_radius) * u_amplitude - u_amplitude;
+    return f * in_boundary(x);
+}
 
-void main(){
-    gl_Position=  modelMatrix * vec4(position,0.5);
-    vUv = uv;
+void main() {
+    vec3 modelPosition = position;
+    float y = length(modelPosition.xy);
+    modelPosition.z += gravitational_well(y);
+
+    csm_Position = modelPosition;
+
 }
