@@ -35,7 +35,6 @@ const material = new THREE.ShaderMaterial({
   fragmentShader,
   transparent: true,
   side: THREE.DoubleSide,
-  wireframe: true,
   uniforms: {
     u_time: { value: 0 },
     u_amplitude: { value: 7 },
@@ -45,7 +44,7 @@ const material = new THREE.ShaderMaterial({
 });
 
 // Mesh
-const mesh = new THREE.Mesh(geometry, material);
+const mesh = new THREE.LineSegments(geometry, material);
 
 mesh.rotateX(-Math.PI / 2);
 scene.add(mesh);
