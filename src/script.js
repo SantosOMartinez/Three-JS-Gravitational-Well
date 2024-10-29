@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
 
@@ -31,8 +30,7 @@ const textureLoader = new THREE.TextureLoader();
 const geometry = new THREE.RingGeometry(0, 10, 50, 50);
 
 // Material
-const material = new CustomShaderMaterial({
-  baseMaterial: THREE.MeshBasicMaterial,
+const material = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
   transparent: true,

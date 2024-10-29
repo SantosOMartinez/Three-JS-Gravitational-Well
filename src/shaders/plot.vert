@@ -1,6 +1,8 @@
 uniform float u_amplitude;
 uniform float u_inner_radius;
 
+#define PI 3.14
+
 float in_boundary(float x) {
     return -u_inner_radius <= x && x <= u_inner_radius ? 1.0 : 0.0;
 }
@@ -11,10 +13,10 @@ float gravitational_well(float x) {
 }
 
 void main() {
-    vec3 modelPosition = position;
-    float y = length(modelPosition.xy);
-    modelPosition.z += gravitational_well(y);
+    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+    float y = length(modelPosition.xz);
+    modelPosition.y += gravitational_well(y);
 
-    csm_Position = modelPosition;
+    gl_Position = projectionMatrix * viewMatrix * modelPosition;
 
 }
