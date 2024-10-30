@@ -1,7 +1,7 @@
-import * as THREE from "three";
+import { BufferGeometry, Float32BufferAttribute } from "three";
 
 const createWeb = (radius = 1, layers = 20, segments = 100) => {
-  const geometry = new THREE.BufferGeometry();
+  const geometry = new BufferGeometry();
   const vertices = [];
   const indices = [];
 
@@ -53,10 +53,7 @@ const createWeb = (radius = 1, layers = 20, segments = 100) => {
   }
 
   // Set vertices and indices to the geometry
-  geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(vertices, 3)
-  );
+  geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
   geometry.setIndex(indices);
 
   return geometry;
