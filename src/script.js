@@ -4,8 +4,7 @@ import GUI from "lil-gui";
 
 import vertexShader from "./shaders/plot.vert";
 import fragmentShader from "./shaders/plot.frag";
-import { clamp } from "three/src/math/MathUtils.js";
-
+import createWeb from "./web-geometry";
 /**
  * Base
  */
@@ -27,7 +26,7 @@ const textureLoader = new THREE.TextureLoader();
  * Test mesh
  */
 // Geometry
-const geometry = new THREE.RingGeometry(0, 10, 50, 50);
+const geometry = createWeb(10);
 
 // Material
 const material = new THREE.ShaderMaterial({
