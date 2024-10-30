@@ -45,7 +45,7 @@ const material = new THREE.ShaderMaterial({
 // Mesh
 const mesh = new THREE.LineSegments(geometry, material);
 
-mesh.rotateX(-Math.PI / 2);
+mesh.rotation.x = (3 * Math.PI) / 2;
 scene.add(mesh);
 
 const config = {
@@ -69,6 +69,31 @@ gui
 gui.add(config, "play").name("Play");
 
 gui.addColor(material.uniforms.u_color, "value").name("color");
+
+const translations = gui.addFolder("Translation");
+translations.add(mesh.position, "x").min(-10).max(10).step(0.01).name("X");
+translations.add(mesh.position, "y").min(-10).max(10).step(0.01).name("Y");
+translations.add(mesh.position, "z").min(-10).max(10).step(0.01).name("Z");
+
+const rotations = gui.addFolder("Rotations");
+rotations
+  .add(mesh.rotation, "x")
+  .min(0)
+  .max(2 * Math.PI)
+  .step(0.01)
+  .name("X");
+rotations
+  .add(mesh.rotation, "y")
+  .min(0)
+  .max(2 * Math.PI)
+  .step(0.01)
+  .name("Y");
+rotations
+  .add(mesh.rotation, "z")
+  .min(0)
+  .max(2 * Math.PI)
+  .step(0.01)
+  .name("Z");
 
 /**
  * Sizes

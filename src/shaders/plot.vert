@@ -13,10 +13,9 @@ float gravitational_well(float x) {
 }
 
 void main() {
-    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    float y = length(modelPosition.xz);
-    modelPosition.y += gravitational_well(y);
+    vec4 modelPosition = vec4(position, 1.0);
+    float y = length(modelPosition.xy);
+    modelPosition.z += gravitational_well(y);
 
-    gl_Position = projectionMatrix * viewMatrix * modelPosition;
-
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * modelPosition;
 }
